@@ -8,6 +8,7 @@ def roulette():
 
 def slot_machine():
     sm.main()
+
 def poker():
     pass
 
