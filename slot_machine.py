@@ -6,11 +6,6 @@ def spin_row():
 
     return [random.choice(symbole) for _ in range(3)]
 
-def print_row(row):
-    print("-----------")
-    print("|".join(row))
-    print("-----------")
-
 def get_wyplata(row, bet):
     if row[0] == row[1] == row[2]:
         if row[0] == '🍒':
@@ -27,11 +22,6 @@ def get_wyplata(row, bet):
 
 def main():
     balans = 100
-    print("--------------------------")
-    print("Witaj w slot machine!")
-    print("Symbole: 🍒 🍉 🍎 🍊 ⭐")
-    print("--------------------------")
-
     while balans > 0:
         print(f"Twój balans: {balans}zł.")
 
