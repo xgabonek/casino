@@ -26,14 +26,28 @@ First you create a button:
 button = pygui.Button(100, 100, 200, 50, "Click me")
 than you should draw it every frame in your main loop:
 button.draw(SURFACE) where surface is pygame.surface.Surface
+
+margin stands for outer distance between sticked objects. margin[0] is for x, [1] is for y
+stick_or_insert stands for parent- positioning: 0 for stick, 1 for insert
 """
 
 class Button:
-    def __init__(self, pos: list[int, int], width: int, height: int, text: str, background_color: str="#6c6", color: str="#fff", hover_background_color: str="#5b5", hover_color: str="#ccc", font_family: str='segoeuiemoji', font_size: int=16, func=lambda _: ..., args: list=None, sleep: float=0.1):
+    def __init__(self, pos_or_parent, width: int, height: int, text: str, background_color: str="#6c6", color: str="#fff", hover_background_color: str="#5b5", hover_color: str="#ccc", font_family: str='segoeuiemoji', font_size: int=16, func=lambda _: ..., args: list=None, sleep: float=0.1, margin=[10, 10], stick_or_insert=None):
         pygame.init()
         pygame.font.init()
         
-        self.x, self.y = pos
+        if isinstance(pos_or_parent, (list, tuple)):
+            pos = pos_or_parent
+            self.x, self.y = pos
+        else:
+            parent = pos_or_parent
+            if stick_or_insert is None:
+                raise ValueError
+            if stick_or_insert == 0:
+                self.x, self.y = parent.x + parent.width + margin[0], parent.y
+            else:
+                self.x, self.y = parent.x + margin[0], parent.y + margin[1]
+
         self.width = width
         self.height = height
         self.text = text
@@ -76,6 +90,9 @@ class Button:
         if events.get('clicked'):
             self.process()
 
+        if self.text_size[0] + 5 >= self.width:
+            self.width = self.text_size[0] + 20
+
         color = hex_to_rgb(self.background_color) if not hover else hex_to_rgb(self.hover_background_color)
 
         pygame.draw.rect(surface, color, (self.x, self.y, self.width, self.height))
@@ -86,11 +103,22 @@ The same as button but not clickable
 If you want for insert image dont put text because it will not be showed and add image link or path
 """
 class Label:
-    def __init__(self, pos: list[int, int], width: int, height: int, text: str, background_color: str="#6c6", color: str="#fff", font: str='segoeuiemoji', font_size: int=16, image: str=None):
+    def __init__(self, pos_or_parent, width: int, height: int, text: str, background_color: str="#6c6", color: str="#fff", font: str='segoeuiemoji', font_size: int=16, image: str=None, margin=[10, 10], stick_or_insert: int=None):
         pygame.init()
         pygame.font.init()
-        
-        self.x, self.y = pos
+    
+        if isinstance(pos_or_parent, (list, tuple)):
+            pos = pos_or_parent
+            self.x, self.y = pos
+        else:
+            parent = pos_or_parent
+            if stick_or_insert is None:
+                raise ValueError
+            if stick_or_insert == 0:
+                self.x, self.y = parent.x + parent.width + margin[0], parent.y
+            else:
+                self.x, self.y = parent.x + margin[0], parent.y + margin[1]
+
         self.width = width
         self.height = height
         self.background_color = hex_to_rgb(background_color)
@@ -105,5 +133,8 @@ class Label:
         self.text = self.font.render(text, True, self.color)
 
     def draw(self,surface) -> None:
+        if self.text_size[0] + 5 >= self.width:
+            self.width = self.text_size[0] + 20
+
         pygame.draw.rect(surface, self.background_color, (self.x, self.y, self.width, self.height))
         surface.blit(self.text, (self.x + self.width // 2 -  self.text_size[0] // 2, self.y + self.height // 2 - self.text_size[1] // 2))

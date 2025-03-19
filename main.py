@@ -21,19 +21,17 @@ class Casino:
         self.surface = pygame.display.set_mode((self.WIDTH, self.HEIGHT))
         self.clock = pygame.time.Clock()
 
-        cell_width = self.WIDTH // 6
-        self.slots = [
-            pygui.Label((self.WIDTH // 2 - cell_width - cell_width // 2, self.HEIGHT // 4), self.WIDTH // 6, self.HEIGHT // 3, text="-", background_color="#ccc", color="#333", font_size=50),
-            pygui.Label((self.WIDTH // 2 - cell_width - cell_width // 2 + cell_width, self.HEIGHT // 4), self.WIDTH // 6, self.HEIGHT // 3, text="-", background_color="#ccc", color="#333", font_size=50),
-            pygui.Label((self.WIDTH // 2 - cell_width - cell_width // 2 + cell_width * 2, self.HEIGHT // 4), self.WIDTH // 6, self.HEIGHT // 3, text="-", background_color="#ccc", color="#333", font_size=50),
-        ]
+        self.slots = None
         self.slot_animation = None
-        self.slot_color = self.hex_to_rgb("#5c5")
+        self.slot_color = "#5c5"
         self.symbols = ['🍒', '🍉', '🍎', '🍊', '⭐']
         self.message_label = pygui.Label((self.WIDTH // 2 - 200, self.HEIGHT - 300), 400, 50, "!!  SPIN  !!")
 
         self.current_window = 0 # 0 - Main menu; 1 - Roulette; 2 - Slot machine; 3 - Poker; 4 - Blackjack
     
+    def gain(self, *args):
+        self.user_playing.balance += 1
+
     def run(self):
         while True:
             self.handle_events()
@@ -42,6 +40,9 @@ class Casino:
             # common for all windows
             label_balance = pygui.Label((10, 10), 100, 50, f'Balance: {self.user_playing.balance}', background_color='#a1eb34', font_size=20)
             label_balance.draw(self.surface)
+
+            button_gain = pygui.Button(label_balance, 50, 50, "+", font_size=42, func=self.gain, stick_or_insert=0)
+            button_gain.draw(self.surface)
 
             label_text = pygui.Label((self.WIDTH // 2 - 100, 10), 200, 100, 'CASINEGRO', background_color='#a1eb34', font_size=40)
             label_text.draw(self.surface)
@@ -69,7 +70,7 @@ class Casino:
     def roulette(self):
         pass
 
-    def animate_slot_machine(self, row, result):
+    def animate_slot_machine(self, row, result, win):
         self.message_label.change_text("SPINING...")
         for i in range(15):
             for slot in self.slots: 
@@ -77,20 +78,20 @@ class Casino:
             time.sleep(0.05 * (i // 2))
         for j, slot in enumerate(self.slots):
             slot.change_text(row[j])
-            
+        self.user_playing.balance += win
         if result:
             self.message_label.change_text("You won!!")
             for i in range(5):
-                self.slot_color = self.hex_to_rgb("#f5d142")
+                self.slot_color = "#f5d142"
                 time.sleep(0.1)
-                self.slot_color = self.hex_to_rgb("#5c5")
+                self.slot_color = "#5c5"
                 time.sleep(0.1)
         else:
             self.message_label.change_text("You lose XDD")
             for i in range(5):
-                self.slot_color = self.hex_to_rgb("#f55742")
+                self.slot_color = "#f55742"
                 time.sleep(0.1)
-                self.slot_color = self.hex_to_rgb("#5c5")
+                self.slot_color = "#5c5"
                 time.sleep(0.1)
         self.message_label.change_text("!!  SPIN  !!")
 
@@ -100,14 +101,21 @@ class Casino:
         if 0 < self.bet <= self.user_playing.balance and (not self.slot_animation or not self.slot_animation.is_alive()):
             self.user_playing.balance -= self.bet
             result, row, win = slots.spin(self.bet)
-            self.user_playing.balance += win
             butthole = 0
-            self.slot_animation = threading.Thread(target=self.animate_slot_machine, args=[row, result], daemon=True)
+            self.slot_animation = threading.Thread(target=self.animate_slot_machine, args=[row, result, win], daemon=True)
             self.slot_animation.start()
 
     def slot_machine(self):
         # SLOTS
-        pygame.draw.rect(self.surface, self.slot_color, (self.WIDTH // 2 - self.WIDTH // 4 - 10, self.HEIGHT // 4 - 10, self.WIDTH // 2 + 20, self.HEIGHT // 3 + 20))
+        back_label = pygui.Label((self.WIDTH // 2 - self.WIDTH // 4 - 10, self.HEIGHT // 4 - 10), self.WIDTH // 2 + 20, self.HEIGHT // 3 + 20, text="", background_color=self.slot_color)
+        back_label.draw(self.surface)
+        if self.slots is None:
+            cell_width = self.WIDTH // 6
+            self.slots = [
+                pygui.Label(back_label, self.WIDTH // 6, self.HEIGHT // 3, text="-", background_color="#ccc", color="#333", font_size=50, stick_or_insert=1),
+            ]
+            self.slots.append(pygui.Label(self.slots[0], self.WIDTH // 6, self.HEIGHT // 3, text="-",      background_color="#ccc", color="#333", font_size=50, stick_or_insert=0, margin=[0, 0]))
+            self.slots.append(pygui.Label(self.slots[1], self.WIDTH // 6, self.HEIGHT // 3, text="-",      background_color="#ccc", color="#333", font_size=50, stick_or_insert=0, margin=[0, 0]))
 
         for slot in self.slots:
             slot.draw(self.surface)
@@ -115,19 +123,19 @@ class Casino:
         slot_button = pygui.Button((self.WIDTH / 2 - 50, self.HEIGHT // 5 * 4), 100, 50, 'SPIN', font_size=30, func=self.spin_slot_machine)
         slot_button.draw(self.surface)
 
-        button_minus = pygui.Button((10, self.HEIGHT - 60), 50, 50, "--", func=self.change_bet, args=[-25], font_size=40)
+        button_minusminus = pygui.Button((10, self.HEIGHT - 60), 50, 50, "--", func=self.change_bet, args=[-25], font_size=40)
+        button_minusminus.draw(self.surface)
+
+        button_minus = pygui.Button(button_minusminus, 50, 50, "-", func=self.change_bet, args=[-5], font_size=40, stick_or_insert=0)
         button_minus.draw(self.surface)
 
-        button_minus = pygui.Button((70, self.HEIGHT - 60), 50, 50, "-", func=self.change_bet, args=[-5], font_size=40)
-        button_minus.draw(self.surface)
-
-        bet_label = pygui.Label((130, self.HEIGHT - 60), 120, 50, f"Bet: {self.bet}", font_size=28)
+        bet_label = pygui.Label(button_minus, 80, 50, f"Bet: {self.bet}", font_size=28, stick_or_insert=0)
         bet_label.draw(self.surface)
         
-        button_plus = pygui.Button((260, self.HEIGHT - 60), 50, 50, "+", func=self.change_bet, args=[5], font_size=40)
+        button_plus = pygui.Button(bet_label, 50, 50, "+", func=self.change_bet, args=[5], font_size=40, stick_or_insert=0)
         button_plus.draw(self.surface)
         
-        button_plusplus = pygui.Button((320, self.HEIGHT - 60), 50, 50, "++", func=self.change_bet, args=[25], font_size=40)
+        button_plusplus = pygui.Button(button_plus, 50, 50, "++", func=self.change_bet, args=[25], font_size=40, stick_or_insert=0)
         button_plusplus.draw(self.surface)
 
         self.message_label.draw(self.surface)
@@ -140,7 +148,7 @@ class Casino:
         pass
 
     def main_menu(self):
-        button_slot_machine = pygui.Button(pos=(100, self.HEIGHT//2 - 50), 
+        button_slot_machine = pygui.Button((100, self.HEIGHT//2 - 50), 
                                            width=200, height=100, text='Slot machine', background_color="#509c00", color="#333", 
                                            font_size=30,
                                            func=self.change_window, args=[2])
