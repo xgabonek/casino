@@ -138,3 +138,62 @@ class Label:
 
         pygame.draw.rect(surface, self.background_color, (self.x, self.y, self.width, self.height))
         surface.blit(self.text, (self.x + self.width // 2 -  self.text_size[0] // 2, self.y + self.height // 2 - self.text_size[1] // 2))
+
+class Checkbox:
+    def __init__(self, pos_or_parent, width, status=False, background_color: str="#6c6", color: str="#fff", hover_background_color: str="#5b5", hover_color: str="#ccc", font_family: str='segoeuiemoji', font_size: int=16, margin=[10, 10], stick_or_insert: int=None):
+        pygame.init()
+        pygame.font.init()
+        
+        if isinstance(pos_or_parent, (list, tuple)):
+            pos = pos_or_parent
+            self.x, self.y = pos
+        else:
+            parent = pos_or_parent
+            if stick_or_insert is None:
+                raise ValueError
+            if stick_or_insert == 0:
+                self.x, self.y = parent.x + parent.width + margin[0], parent.y
+            else:
+                self.x, self.y = parent.x + margin[0], parent.y + margin[1]
+
+        self.width = width
+        self.background_color = hex_to_rgb(background_color)
+        self.color = hex_to_rgb(color)
+        self.hover_background_color = hex_to_rgb(hover_background_color)
+        self.hover_color = hex_to_rgb(hover_color)
+        self.font_size = font_size
+        self.font_family = font_family
+        self.margin = margin
+
+        self.symbols = ["✓", ""]
+        self.status = status
+
+        self.font = pygame.font.SysFont(self.font_family, self.font_size)
+        self.text_size = self.font.size(self.symbols[int(self.status)])
+        self.text = self.font.render(self.symbols[int(self.status)], True, self.color)
+
+    def draw(self, surface):
+        events = self.check_events()
+        hover = events.get('hover')
+        if events.get('clicked'):
+            self.status = not self.status
+            self.text = self.font.render(self.symbols[int(self.status)], True, self.color)
+
+        if self.text_size[0] + 5 >= self.width:
+            self.width = self.text_size[0] + 20
+
+        color = self.background_color if not hover else self.hover_background_color
+        pygame.draw.rect(surface, color, (self.x, self.y, self.width, self.width))
+        surface.blit(self.text, (self.x + self.width // 2 -  self.text_size[0] // 2, self.y + self.width // 2 - self.text_size[1] // 2))
+
+    def check_events(self) -> dict[bool, bool]:
+        mouse = pygame.mouse.get_pos()
+        clicked = False
+        hover = False
+        if self.x < mouse[0] < self.x + self.width and self.y < mouse[1] < self.y + self.width:
+            clicked = pygame.mouse.get_pressed()[0]
+            hover = True
+        return {
+            'hover': hover,
+            'clicked': clicked
+            }

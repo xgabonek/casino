@@ -10,5 +10,5 @@ class SlotMachine:
         win = 0
         if len(set(spin_result)) == 1:
             result = True
-            win = bet * (self.symbols.index(spin_result[0]) + 2)
+            win = bet * (self.symbols.index(spin_result[0]) + 2) * 10
         return result, spin_result, win

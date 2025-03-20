@@ -47,6 +47,21 @@ class Casino:
             label_text = pygui.Label((self.WIDTH // 2 - 100, 10), 200, 100, 'CASINEGRO', background_color='#a1eb34', font_size=40)
             label_text.draw(self.surface)
 
+            button_minusminus = pygui.Button((10, self.HEIGHT - 60), 50, 50, "--", func=self.change_bet, args=[-25], font_size=40)
+            button_minusminus.draw(self.surface)
+
+            button_minus = pygui.Button(button_minusminus, 50, 50, "-", func=self.change_bet, args=[-5], font_size=40, stick_or_insert=0)
+            button_minus.draw(self.surface)
+
+            bet_label = pygui.Label(button_minus, 80, 50, f"Bet: {self.bet}", font_size=28, stick_or_insert=0)
+            bet_label.draw(self.surface)
+
+            button_plus = pygui.Button(bet_label, 50, 50, "+", func=self.change_bet, args=[5], font_size=40, stick_or_insert=0)
+            button_plus.draw(self.surface)
+
+            button_plusplus = pygui.Button(button_plus, 50, 50, "++", func=self.change_bet, args=[25], font_size=40, stick_or_insert=0)
+            button_plusplus.draw(self.surface)
+
             match self.current_window:
                 case 0:
                     self.main_menu()
@@ -123,20 +138,8 @@ class Casino:
         slot_button = pygui.Button((self.WIDTH / 2 - 50, self.HEIGHT // 5 * 4), 100, 50, 'SPIN', font_size=30, func=self.spin_slot_machine)
         slot_button.draw(self.surface)
 
-        button_minusminus = pygui.Button((10, self.HEIGHT - 60), 50, 50, "--", func=self.change_bet, args=[-25], font_size=40)
-        button_minusminus.draw(self.surface)
-
-        button_minus = pygui.Button(button_minusminus, 50, 50, "-", func=self.change_bet, args=[-5], font_size=40, stick_or_insert=0)
-        button_minus.draw(self.surface)
-
-        bet_label = pygui.Label(button_minus, 80, 50, f"Bet: {self.bet}", font_size=28, stick_or_insert=0)
-        bet_label.draw(self.surface)
-        
-        button_plus = pygui.Button(bet_label, 50, 50, "+", func=self.change_bet, args=[5], font_size=40, stick_or_insert=0)
-        button_plus.draw(self.surface)
-        
-        button_plusplus = pygui.Button(button_plus, 50, 50, "++", func=self.change_bet, args=[25], font_size=40, stick_or_insert=0)
-        button_plusplus.draw(self.surface)
+        autospin_checkbox = pygui.Checkbox(slot_button, 50, False, stick_or_insert=0)
+        autospin_checkbox.draw(self.surface)
 
         self.message_label.draw(self.surface)
 
