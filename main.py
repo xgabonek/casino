@@ -12,8 +12,8 @@ class Casino:
 
         self.WIDTH = WIDTH
         self.HEIGHT = HEIGHT
-        self.FPS = 60   
-        self.background_color = self.hex_to_rgb("#a1eb34")
+        self.FPS = 240  
+        self.background_color = self.hex_to_rgb("#73615a")
 
         self.user_playing = user_playing
         self.bet = 0
@@ -23,7 +23,7 @@ class Casino:
 
         self.slots = None
         self.slot_animation = None
-        self.slot_color = "#5c5"
+        self.slot_color = "#fff"
         self.symbols = ['🍒', '🍉', '🍎', '🍊', '⭐']
         self.message_label = pygui.Label((self.WIDTH // 2 - 200, self.HEIGHT - 300), 400, 50, "!!  SPIN  !!")
 
@@ -38,13 +38,13 @@ class Casino:
             self.surface.fill(self.background_color) # bg color
 
             # common for all windows
-            label_balance = pygui.Label((10, 10), 100, 50, f'Balance: {self.user_playing.balance}', background_color='#a1eb34', font_size=20)
+            label_balance = pygui.Label((10, 10), 100, 50, f'Balance: {self.user_playing.balance}', background_color='##383230', font_size=20)
             label_balance.draw(self.surface)
 
             button_gain = pygui.Button(label_balance, 50, 50, "+", font_size=42, func=self.gain, stick_or_insert=0)
             button_gain.draw(self.surface)
 
-            label_text = pygui.Label((self.WIDTH // 2 - 100, 10), 200, 100, 'CASINEGRO', background_color='#a1eb34', font_size=40)
+            label_text = pygui.Label((self.WIDTH // 2 - 100, 10), 200, 100, 'CASINEGRO', background_color='#383230', font_size=40)
             label_text.draw(self.surface)
 
             button_minusminus = pygui.Button((10, self.HEIGHT - 60), 50, 50, "--", func=self.change_bet, args=[-25], font_size=40)
@@ -99,14 +99,14 @@ class Casino:
             for i in range(5):
                 self.slot_color = "#f5d142"
                 time.sleep(0.1)
-                self.slot_color = "#5c5"
+                self.slot_color = "#383230"
                 time.sleep(0.1)
         else:
             self.message_label.change_text("You lose XDD")
             for i in range(5):
-                self.slot_color = "#f55742"
+                self.slot_color = "#77ff00"
                 time.sleep(0.1)
-                self.slot_color = "#5c5"
+                self.slot_color = "#383230"
                 time.sleep(0.1)
         self.message_label.change_text("!!  SPIN  !!")
 
@@ -127,10 +127,10 @@ class Casino:
         if self.slots is None:
             cell_width = self.WIDTH // 6
             self.slots = [
-                pygui.Label(back_label, self.WIDTH // 6, self.HEIGHT // 3, text="-", background_color="#ccc", color="#333", font_size=50, stick_or_insert=1),
+                pygui.Label(back_label, self.WIDTH // 6, self.HEIGHT // 3, text="-", background_color="#383230", color="#333", font_size=50, stick_or_insert=1),
             ]
-            self.slots.append(pygui.Label(self.slots[0], self.WIDTH // 6, self.HEIGHT // 3, text="-",      background_color="#ccc", color="#333", font_size=50, stick_or_insert=0, margin=[0, 0]))
-            self.slots.append(pygui.Label(self.slots[1], self.WIDTH // 6, self.HEIGHT // 3, text="-",      background_color="#ccc", color="#333", font_size=50, stick_or_insert=0, margin=[0, 0]))
+            self.slots.append(pygui.Label(self.slots[0], self.WIDTH // 6, self.HEIGHT // 3, text="-",      background_color="#383230", color="#333", font_size=50, stick_or_insert=0, margin=[0, 0]))
+            self.slots.append(pygui.Label(self.slots[1], self.WIDTH // 6, self.HEIGHT // 3, text="-",      background_color="#383230", color="#333", font_size=50, stick_or_insert=0, margin=[0, 0]))
 
         for slot in self.slots:
             slot.draw(self.surface)
@@ -152,7 +152,7 @@ class Casino:
 
     def main_menu(self):
         button_slot_machine = pygui.Button((100, self.HEIGHT//2 - 50), 
-                                           width=200, height=100, text='Slot machine', background_color="#509c00", color="#333", 
+                                           width=200, height=100, text='Slot machine', background_color="#fff", color="#383230", 
                                            font_size=30,
                                            func=self.change_window, args=[2])
         button_slot_machine.draw(self.surface)
@@ -178,7 +178,7 @@ class Casino:
 class Account:
     def __init__(self, username):
         self.username = username
-        self.balance = 1000
+        self.balance = 1000000000000000000000
 
 if __name__ == '__main__':
     player = Account('joumey')

@@ -32,7 +32,7 @@ stick_or_insert stands for parent- positioning: 0 for stick, 1 for insert
 """
 
 class Button:
-    def __init__(self, pos_or_parent, width: int, height: int, text: str, background_color: str="#6c6", color: str="#fff", hover_background_color: str="#5b5", hover_color: str="#ccc", font_family: str='segoeuiemoji', font_size: int=16, func=lambda _: ..., args: list=None, sleep: float=0.1, margin=[10, 10], stick_or_insert=None):
+    def __init__(self, pos_or_parent, width: int, height: int, text: str, background_color: str="#383230", color: str="#fff", hover_background_color: str="#383230", hover_color: str="#fff", font_family: str='segoeuiemoji', font_size: int=16, func=lambda _: ..., args: list=None, sleep: float=0.1, margin=[10, 10], stick_or_insert=None):
         pygame.init()
         pygame.font.init()
         
@@ -103,7 +103,7 @@ The same as button but not clickable
 If you want for insert image dont put text because it will not be showed and add image link or path
 """
 class Label:
-    def __init__(self, pos_or_parent, width: int, height: int, text: str, background_color: str="#6c6", color: str="#fff", font: str='segoeuiemoji', font_size: int=16, image: str=None, margin=[10, 10], stick_or_insert: int=None):
+    def __init__(self, pos_or_parent, width: int, height: int, text: str, background_color: str="#383230", color: str="#fff", font: str='segoeuiemoji', font_size: int=16, image: str=None, margin=[10, 10], stick_or_insert: int=None):
         pygame.init()
         pygame.font.init()
     
@@ -140,7 +140,7 @@ class Label:
         surface.blit(self.text, (self.x + self.width // 2 -  self.text_size[0] // 2, self.y + self.height // 2 - self.text_size[1] // 2))
 
 class Checkbox:
-    def __init__(self, pos_or_parent, width, status=False, background_color: str="#6c6", color: str="#fff", hover_background_color: str="#5b5", hover_color: str="#ccc", font_family: str='segoeuiemoji', font_size: int=16, margin=[10, 10], stick_or_insert: int=None):
+    def __init__(self, pos_or_parent, width, status=False, background_color: str="##383230", color: str="#fff", hover_background_color: str="#383230", hover_color: str="#fff", font_family: str='segoeuiemoji', font_size: int=16, margin=[10, 10], stick_or_insert: int=None):
         pygame.init()
         pygame.font.init()
         
